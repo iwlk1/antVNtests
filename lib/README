@@ -1,0 +1,6 @@
+THIS FOLDER SHOULD CONTAIN JOGL LIBRARIES.
+ANT BUILDFILE SPECIFIES SEVERAL:
+	gluegen-rt.jar
+	jogl-all.jar
+	gluegen-rt-natives-*-*.jar
+	jogl-all-natives-*-*.jar

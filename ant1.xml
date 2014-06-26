@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="AntVN01" default="build_all" basedir=".">
+		<description>
+			Simple ant buildfile for VN Engine 01
+		</description>
+	<!-- set global properties for the build -->
+	
+	<property name="src" location="src"/>
+	<property name="build" location="build"/>
+	<property name="dist" location="bin"/>
+	<property name="lib" location="lib"/>
+	
+	<condition property="isWindows">
+        <os family="windows"/>
+    </condition>
+
+    <condition property="isLinux">
+        <os family="unix"/>
+    </condition>
+	
+	<target name="init">
+		<!-- Create timestamp -->
+		<tstamp/>
+		<!-- Create build directory -->
+		<mkdir dir="${build}"/>
+	</target>
+
+	<target name="windows_compile" depends="init" if="isWindows" description="Compile the source">
+		<javac srcdir="${src}" destdir="${build}" includeantruntime="false">
+			<classpath>
+				<pathelement location="${basedir}"/>
+				<pathelement path="${lib}/jogl-all.jar"/>
+				<pathelement path="${lib}/gluegen-rt.jar"/>
+				<pathelement path="${lib}/jogl-all-natives-windows-amd64.jar"/>
+				<pathelement path="${lib}/gluegen-rt-natives-windows-and64.jar"/>
+			</classpath>
+		</javac>
+	</target>
+	
+	<target name="linux_compile" depends="init" if="isLinux" description="Compile the source">
+		<javac srcdir="${src}" destdir="${build}" includeantruntime="false">
+			<classpath>
+				<pathelement location="${basedir}"/>
+				<pathelement path="${lib}/jogl-all.jar"/>
+				<pathelement path="${lib}/gluegen-rt.jar"/>
+				<pathelement path="${lib}/jogl-all-natives-linux-amd64.jar"/>
+				<pathelement path="${lib}/gluegen-rt-natives-linux-and64.jar"/>
+			</classpath>
+		</javac>
+	</target>
+	
+	<target name="windows_dist" depends="windows_compile" if="isWindows" description="Generate the distributable">
+		
+		<!-- Put everything in ${build} into the MyProject-${DSTAMP}.jar file -->
+		<jar jarfile="${dist}//${ant.project.name}-${DSTAMP}.jar" basedir="${build}">
+			<zipfileset dir="${src}/res/images/"
+						prefix="res/images/"/>
+			<manifest>
+				<attribute name="Main-Class" value="opengltests2.Main"/>
+				<attribute name="Class-Path" value = "gluegen-rt.jar jogl-all.jar jogl-all-natives-windows-amd64.jar gluegen-rt-natives-windows-amd64.jar"/>
+			</manifest>
+		</jar>
+        <copy file="${basedir}/lib/gluegen-rt.jar" tofile="${dist}/gluegen-rt.jar"/>
+        <copy file="${basedir}/lib/jogl-all.jar" tofile="${dist}/jogl-all.jar"/>
+        <copy file="${basedir}/lib/gluegen-rt-natives-windows-amd64.jar" tofile="${dist}/gluegen-rt-natives-windows-amd64.jar"/>
+        <copy file="${basedir}/lib/jogl-all-natives-windows-amd64.jar" tofile="${dist}/jogl-all-natives-windows-amd64.jar"/>
+	</target>
+	
+	<target name="linux_dist" depends="linux_compile" if="isLinux" description="Generate the distributable">
+		
+		<!-- Put everything in ${build} into the MyProject-${DSTAMP}.jar file -->
+		<jar jarfile="${dist}//${ant.project.name}-${DSTAMP}.jar" basedir="${build}">
+			<zipfileset dir="${src}/res/images/"
+						prefix="res/images"/>
+			<manifest>
+				<attribute name="Main-Class" value="opengltests2.Main"/>
+				<attribute name="Class-Path" value = "gluegen-rt.jar jogl-all.jar jogl-all-natives-linux-amd64.jar gluegen-rt-natives-linux-amd64.jar"/>
+			</manifest>
+		</jar>
+        <copy file="${basedir}/lib/gluegen-rt.jar" tofile="${dist}/gluegen-rt.jar"/>
+        <copy file="${basedir}/lib/jogl-all.jar" tofile="${dist}/jogl-all.jar"/>
+        <copy file="${basedir}/lib/gluegen-rt-natives-linux-amd64.jar" tofile="${dist}/gluegen-rt-natives-linux-amd64.jar"/>
+        <copy file="${basedir}/lib/jogl-all-natives-linux-amd64.jar" tofile="${dist}/jogl-all-natives-linux-amd64.jar"/>
+	</target>
+	
+	<target name="build_all" depends="windows_dist, linux_dist" description="entry point?"/>
+	
+	<target name="clean" description="Clean up">
+		<!-- Delete the ${build} and ${dist} directory trees -->
+		<delete dir="${build}"/>
+		<delete dir="${dist}"/>
+	</target>
+</project>
